@@ -1,0 +1,6 @@
+# generated and temporary files
+*.bak
+*.com
+*.o
+*.exe
+
