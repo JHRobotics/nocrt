@@ -83,6 +83,8 @@ __security_init_cookie (void)
   __security_cookie_complement = ~cookie;
 }
 
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved);
+
 /* DllMain caller and I/O initializer */
 __declspec(noinline) WINBOOL
 __DllMainCRTStartup (HANDLE hDllHandle, DWORD dwReason, LPVOID lpreserved)
