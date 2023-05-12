@@ -235,8 +235,15 @@ char *nocrt_strchr(const char *str, int character)
 char *nocrt_strstr(const char *str1, const char *str2)
 {
 	size_t i;
-	size_t str2_len = strlen(str1);
-	size_t cmpmax = strlen(str2) - str2_len;
+	size_t str1_len = nocrt_strlen(str1);
+	size_t str2_len = nocrt_strlen(str2);
+	size_t cmpmax = str1_len - str2_len;
+
+	if(str2_len > str1_len)
+	{
+		return NULL;
+	}
+	
 	for(i = 0; i <= cmpmax; i++)
 	{
 		if(nocrt_strncmp(str1+i, str2, str2_len) == 0)
@@ -571,6 +578,7 @@ static size_t vformat_float(void *resource, formatf_callback_t f, size_t *pn, fm
 	size_t posdown = 0;
 	int negative = 0;
 	size_t r = 0;
+	(void)type;
 	
 	maxfloat_t v, v1, v2, rf = 0.5;
 	
@@ -787,6 +795,17 @@ size_t nocrt_vformatf(void *resource, formatf_callback_t f, size_t n, const char
   				ZEROES(spec);
   				break;
   			case 'p':
+  				if(sizeof(void*) == 4)
+  				{
+  					spec.length = FMT_LEN_LONG;
+  				}
+  				else if(sizeof(void*) == 8)
+  				{
+  					spec.length = FMT_LEN_LONGLONG;
+  				}
+  				cnt += vformat_dec(resource, f, &left, &spec, 'x', &args);
+  				ctrl = 0;
+  				ZEROES(spec);
   				break;
   			case '%':
   				if(left){f(resource, '%'); left--;}
