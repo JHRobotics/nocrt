@@ -112,6 +112,24 @@ int nocrt_stricmp(const char *s1, const char *s2)
 	return (unsigned char)nocrt_case_norm(*p1) - (unsigned char)nocrt_case_norm(*p2);
 }
 
+int nocrt_strnicmp(const char *s1, const char *s2, size_t num)
+{
+	const unsigned char *p1 = (const unsigned char *)s1;
+	const unsigned char *p2 = (const unsigned char *)s2;
+	
+	while(num > 0 && nocrt_case_norm(*p1) == nocrt_case_norm(*p2))
+	{
+		if(*p1 == '\0') break;
+		p1++;
+		p2++;
+		num--;
+	}
+	
+	if(num == 0) return 0;
+	
+	return nocrt_case_norm(*p1) - nocrt_case_norm(*p2);
+}
+
 char *nocrt_strcpy(char *dst, const char *src)
 {	
 	char *pdst = dst;
@@ -702,6 +720,8 @@ static size_t vformat_float(void *resource, formatf_callback_t f, size_t *pn, fm
 	return r;
 }
 
+static const char vformatf_nullstr[] = "(null)";
+
 size_t nocrt_vformatf(void *resource, formatf_callback_t f, size_t n, const char *fmt, va_list args)
 {
   int ctrl = 0; 
@@ -762,7 +782,13 @@ size_t nocrt_vformatf(void *resource, formatf_callback_t f, size_t n, const char
   				else
   				{
   					const char *ptr = va_arg(args, const char*);
-  					size_t ptr_len = nocrt_strlen(ptr);
+  					size_t ptr_len;
+  					if(ptr == NULL)
+  					{
+  						ptr = vformatf_nullstr;
+  					}
+  					
+  					ptr_len = nocrt_strlen(ptr);
   					
   					/* right align of string */
   					if(!spec.leftalign && ptr_len < (size_t)spec.width)

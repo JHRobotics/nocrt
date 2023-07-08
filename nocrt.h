@@ -26,6 +26,7 @@
 
 int nocrt_strcmp(const char *s1, const char *s2);
 int nocrt_stricmp(const char *s1, const char *s2);
+int nocrt_strnicmp(const char *s1, const char *s2, size_t num);
 char *nocrt_strcpy(char *dst, const char *src);
 char *nocrt_strcat(char *dst, const char *src);
 char *nocrt_strncat(char *dst, const char *src, size_t num);
@@ -51,6 +52,7 @@ long int nocrt_strtol(const char* str, char** endptr, int base);
 
 #define strcmp  nocrt_strcmp
 #define stricmp nocrt_stricmp
+#define strnicmp nocrt_strnicmp
 #define strncmp nocrt_strncmp
 #define strcpy  nocrt_strcpy
 #define strcat  nocrt_strcat
