@@ -219,6 +219,13 @@ void  *nocrt_memset(void *ptr, int value, size_t num)
 	return ptr;
 }
 
+#ifdef NOCRT_BUILD_MEMSET
+void  *memset(void *ptr, int value, size_t num)
+{
+	return nocrt_memset(ptr, value, num);
+}
+#endif
+
 char *nocrt_strrchr(const char *str, int character)
 {
 	char *r = NULL;

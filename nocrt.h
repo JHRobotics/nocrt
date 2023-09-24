@@ -58,7 +58,9 @@ long int nocrt_strtol(const char* str, char** endptr, int base);
 #define strcat  nocrt_strcat
 #define strncat nocrt_strncat
 #define memcpy  nocrt_memcpy
+#ifndef NOCRT_BUILD_MEMSET
 #define memset  nocrt_memset
+#endif
 #define strrchr nocrt_strrchr
 #define strchr  nocrt_strchr
 #define vsprintf nocrt_vsprintf
