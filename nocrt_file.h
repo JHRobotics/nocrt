@@ -66,7 +66,7 @@ extern nocrt_FILE *nocrt_stderr;
 #define fgetc nocrt_fgetc
 #define fputc nocrt_fputc
 #define fgets nocrt_fgets
-#define fputs nocrt_fputc
+#define fputs nocrt_fputs
 #define vfprintf nocrt_vfprintf
 #define fprintf nocrt_fprintf
 #define rewind nocrt_rewind
