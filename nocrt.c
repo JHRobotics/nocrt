@@ -219,13 +219,6 @@ void  *nocrt_memset(void *ptr, int value, size_t num)
 	return ptr;
 }
 
-#ifdef NOCRT_BUILD_MEMSET
-void  *memset(void *ptr, int value, size_t num)
-{
-	return nocrt_memset(ptr, value, num);
-}
-#endif
-
 char *nocrt_strrchr(const char *str, int character)
 {
 	char *r = NULL;
@@ -285,6 +278,7 @@ unsigned long int nocrt_strtoul(const char* str, char** endptr, int base)
 	unsigned long num = 0;
 	const char* ptr = str;
 	unsigned long digit;
+	int numcnt = 0;
 	
 	for(; *ptr != '\0'; ptr++)
 	{
@@ -305,23 +299,29 @@ unsigned long int nocrt_strtoul(const char* str, char** endptr, int base)
 			case 'x':
 				if(num == 0 && (base = 8 || base == 16 || base == 0))
 				{
+					digit = 0;
 					base = 16;
+					break;
 				}
-				else
-				{
-					goto strtoul_dingo;
-				}
+				/* FALLTHRU */
 			case 'a' ... 'w': 
 			case 'y' ... 'z':
 				digit = *ptr - 'a' + 10;
 				break;				
 			case '-':
 			case '+':
+				numcnt++;
 				continue;
 			default:
+				if(nocrt_isspace(*ptr) && numcnt == 0)
+				{
+					continue;
+				}
 				goto strtoul_dingo;
 		}
 		
+		numcnt++;
+
 		if(digit != 0)
 		{
 			if(base == 0)
@@ -356,6 +356,7 @@ long int nocrt_strtol(const char* str, char** endptr, int base)
 	const char* ptr = str;
 	unsigned long digit;
 	int negative = 0;
+	int numcnt = 0;
 	
 	for(; *ptr != '\0'; ptr++)
 	{
@@ -376,24 +377,30 @@ long int nocrt_strtol(const char* str, char** endptr, int base)
 			case 'x':
 				if(num == 0 && (base = 8 || base == 16 || base == 0))
 				{
+					digit = 0;
 					base = 16;
+					break;
 				}
-				else
-				{
-					goto strtol_dingo;
-				}
+				/* FALLTHRU */
 			case 'a' ... 'w': 
 			case 'y' ... 'z':
 				digit = *ptr - 'a' + 10;
 				break;				
 			case '-':
+				numcnt++;
 				negative = 1;
 				continue;
 			case '+':
+				numcnt++;
 				continue;
 			default:
+				if(nocrt_isspace(*ptr) && numcnt == 0)
+				{
+					continue;
+				}
 				goto strtol_dingo;
 		}
+		numcnt++;
 		
 		if(digit != 0)
 		{
@@ -427,6 +434,15 @@ strtol_dingo:
 	return num;
 }
 
+long int nocrt_atol(const char *str)
+{
+	return nocrt_strtol(str, NULL, 10);
+}
+
+int nocrt_atoi(const char *str)
+{
+	return (int)nocrt_strtol(str, NULL, 10);
+}
 
 #define FMT_LEN_NORMAL 0
 #define FMT_LEN_HALF -1
@@ -1005,6 +1021,22 @@ int nocrt_isxdigit(int c)
 	if(c >= 'a' && c <= 'f')
 	{
 		return 1;
+	}
+	
+	return 0;
+}
+
+int nocrt_isspace(int c)
+{
+	switch(c)
+	{
+		case ' ':
+		case '\t':
+		case '\n':
+		case '\v':
+		case '\f':
+		case '\r':
+			return 1;
 	}
 	
 	return 0;

@@ -48,7 +48,10 @@ int nocrt_tolower(int c);
 int nocrt_toupper(int c);
 int nocrt_isdigit(int c);
 int nocrt_isxdigit(int c);
+int nocrt_isspace(int c);
 long int nocrt_strtol(const char* str, char** endptr, int base);
+long int nocrt_atol(const char *str);
+int nocrt_atoi(const char *str);
 
 #define strcmp  nocrt_strcmp
 #define stricmp nocrt_stricmp
@@ -58,9 +61,7 @@ long int nocrt_strtol(const char* str, char** endptr, int base);
 #define strcat  nocrt_strcat
 #define strncat nocrt_strncat
 #define memcpy  nocrt_memcpy
-#ifndef NOCRT_BUILD_MEMSET
 #define memset  nocrt_memset
-#endif
 #define strrchr nocrt_strrchr
 #define strchr  nocrt_strchr
 #define vsprintf nocrt_vsprintf
@@ -74,7 +75,10 @@ long int nocrt_strtol(const char* str, char** endptr, int base);
 #define toupper  nocrt_toupper
 #define isdigit  nocrt_isdigit
 #define isxdigit nocrt_isxdigit
+#define isspace  nocrt_isspace
 #define strtol   nocrt_strtol
+#define atoi     nocrt_atoi
+#define atol     nocrt_atol
 
 #ifdef main
 #undef main

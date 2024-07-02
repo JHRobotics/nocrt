@@ -6,7 +6,7 @@ LIBS=-luser32 -lkernel32 -Wl,-subsystem,console
 
 DEPS = Makefile
 
-TESTS := hello.exe test1.exe test2.exe test3.exe test4.exe test5.exe test6.exe
+TESTS := hello.exe test1.exe test2.exe test3.exe test4.exe test5.exe test6.exe test7.exe
 
 NOCRT=1
 
