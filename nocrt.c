@@ -28,7 +28,7 @@
 
 #ifdef NOCRT
 
-#define ZEROES(_s) memset(&(_s), 0, sizeof(_s))
+#define ZEROES(_s) nocrt_memset(&(_s), 0, sizeof(_s))
 
 size_t nocrt_strlen(const char *s)
 {
@@ -210,13 +210,6 @@ void  *nocrt_memcpy(void *dst, const void *src, size_t num)
 	}
 	
 	return dst;
-}
-
-void  *nocrt_memset(void *ptr, int value, size_t num)
-{
-	unsigned char *pdst = ptr;
-	while(num--) *(pdst++) = value;
-	return ptr;
 }
 
 char *nocrt_strrchr(const char *str, int character)
@@ -534,11 +527,11 @@ static size_t vformat_dec(void *resource, formatf_callback_t f, size_t *pn, fmt_
 	
 	if(spec->zerofill)
 	{
-		memset(buf, '0', MAXINT_BUFFER);
+		nocrt_memset(buf, '0', MAXINT_BUFFER);
 	}
 	else
 	{
-		memset(buf, ' ', MAXINT_BUFFER);
+		nocrt_memset(buf, ' ', MAXINT_BUFFER);
 	}
 	
 	if(v == 0)
@@ -1042,4 +1035,22 @@ int nocrt_isspace(int c)
 	return 0;
 }
 
+#define MEMSET_DEF(_fname) \
+	void  *_fname(void *ptr, int value, size_t num){ \
+	unsigned char *pdst = ptr; \
+	while(num--) *(pdst++) = value; \
+	return ptr; }
+
+MEMSET_DEF(nocrt_memset)
+
+#ifdef NOCRT_BUILD_MEMSET
+
+#ifdef memset
+#undef memset
+#endif
+
+MEMSET_DEF(memset)
+#endif
+
 #endif /* NOCRT */
+
