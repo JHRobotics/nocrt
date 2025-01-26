@@ -100,6 +100,26 @@ int nocrt_atoi(const char *str);
  double nocrt_modf(double value, double* iptr);
 #endif
 
+#ifdef NOCRT_CALC
+	float nocrt_logf(float x);
+	float nocrt_sinf(float x);
+	float nocrt_cosf(float x);
+	float nocrt_tanf(float x);
+	double nocrt_log(double x);
+	double nocrt_sin(double x);
+	double nocrt_cos(double x);
+	double nocrt_tan(double x);
+
+# define logf nocrt_logf
+# define sinf nocrt_sinf
+# define cosf nocrt_cosf
+# define tanf nocrt_tanf
+# define log nocrt_log
+# define sin nocrt_sin
+# define cos nocrt_cos
+# define tan nocrt_tan
+#endif
+
 #ifdef NOCRT_MEM
 # include "nocrt_mem.h"
 #endif

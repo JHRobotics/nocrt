@@ -17,9 +17,9 @@ all: $(TESTS)
 SOURCES := 
 
 ifdef NOCRT
-	SOURCES += ../nocrt.c ../nocrt_exe.c ../nocrt_file_win.c ../nocrt_mem_win.c ../nocrt_math.c
+	SOURCES += ../nocrt.c ../nocrt_exe.c ../nocrt_file_win.c ../nocrt_mem_win.c ../nocrt_math.c ../nocrt_math_calc.c
 	LDFLAGS += -nostdlib -nodefaultlibs -lgcc
-	CFLAGS  += -DNOCRT -DNOCRT_FILE -DNOCRT_FLOAT -DNOCRT_MEM -ffreestanding -nostdlib
+	CFLAGS  += -DNOCRT -DNOCRT_FILE -DNOCRT_FLOAT -DNOCRT_MEM -DNOCRT_CALC -ffreestanding -nostdlib
 endif
 
 OBJS := $(SOURCES:.c=.c$(OBJ_SUFFIX))
