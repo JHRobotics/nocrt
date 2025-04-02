@@ -1035,6 +1035,74 @@ int nocrt_isspace(int c)
 	return 0;
 }
 
+int nocrt_isblank(int c)
+{
+	switch(c)
+	{
+		case ' ':
+		case '\t':
+			return 1;
+	}
+
+	return 0;
+}
+
+int nocrt_islower(int c)
+{
+	if(c >= 'a' && c <= 'z')
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+int nocrt_isupper(int c)
+{
+	if(c >= 'A' && c <= 'Z')
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+int nocrt_isalpha(int c)
+{
+	return nocrt_islower(c) || nocrt_isupper(c);
+}
+
+int nocrt_isalnum(int c)
+{
+	return nocrt_isalpha(c) || nocrt_isdigit(c);
+}
+
+int nocrt_iscntrl(int c)
+{
+	if(c <= 0x1f) /* from NUL to US */
+		return 1;
+
+	if(c == 0x7f) /* DEL */
+		return 1;
+
+	return 0;
+}
+
+int nocrt_isprint(int c)
+{
+	return !nocrt_iscntrl(c);
+}
+
+int nocrt_isgraph(int c)
+{
+	return (c != ' ') && nocrt_isprint(c);
+}
+
+int nocrt_ispunct(int c)
+{
+	return nocrt_isgraph(c) && !nocrt_isalnum(c);
+}
+
 #define MEMSET_DEF(_fname) \
 	void  *_fname(void *ptr, int value, size_t num){ \
 	unsigned char *pdst = ptr; \

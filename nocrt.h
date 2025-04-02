@@ -49,6 +49,15 @@ int nocrt_toupper(int c);
 int nocrt_isdigit(int c);
 int nocrt_isxdigit(int c);
 int nocrt_isspace(int c);
+int nocrt_isblank(int c);
+int nocrt_islower(int c);
+int nocrt_isupper(int c);
+int nocrt_isalpha(int c);
+int nocrt_isalnum(int c);
+int nocrt_iscntrl(int c);
+int nocrt_isprint(int c);
+int nocrt_isgraph(int c);
+int nocrt_ispunct(int c);
 long int nocrt_strtol(const char* str, char** endptr, int base);
 long int nocrt_atol(const char *str);
 int nocrt_atoi(const char *str);
@@ -76,6 +85,15 @@ int nocrt_atoi(const char *str);
 #define isdigit  nocrt_isdigit
 #define isxdigit nocrt_isxdigit
 #define isspace  nocrt_isspace
+#define isblank  nocrt_isblank
+#define islower  nocrt_islower
+#define isupper  nocrt_isupper
+#define isalpha  nocrt_isalpha
+#define isalnum  nocrt_isalnum
+#define iscntrl  nocrt_iscntrl
+#define isprint  nocrt_isprint
+#define isgraph  nocrt_isgraph
+#define ispunct  nocrt_ispunct
 #define strtol   nocrt_strtol
 #define atoi     nocrt_atoi
 #define atol     nocrt_atol
