@@ -278,7 +278,12 @@ int mainCRTStartup(void)
 	return main(def_argc, def_argv);
 }
 
-int atexit(void (*func)(void))
+int
+#ifdef __GNUC__
+__attribute__((externally_visible))
+/* fix for LTO */
+#endif
+atexit(void (*func)(void))
 {
 	(void)func;
 	return 0;
