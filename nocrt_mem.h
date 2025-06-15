@@ -24,15 +24,15 @@
 
 #ifdef NOCRT
 
-void *noctr_malloc(size_t size);
-void *noctr_realloc(void *ptr, size_t new_size);
-void *noctr_calloc(size_t num, size_t size);
-void noctr_free(void *ptr);
+void *nocrt_malloc(size_t size);
+void *nocrt_realloc(void *ptr, size_t new_size);
+void *nocrt_calloc(size_t num, size_t size);
+void nocrt_free(void *ptr);
 
-#define malloc noctr_malloc
-#define realloc noctr_realloc
-#define calloc noctr_calloc
-#define free noctr_free
+#define malloc nocrt_malloc
+#define realloc nocrt_realloc
+#define calloc nocrt_calloc
+#define free nocrt_free
 
 #endif /* NOCRT */
 

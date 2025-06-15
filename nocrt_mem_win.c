@@ -28,27 +28,26 @@
 #include "nocrt.h"
 #include "nocrt_mem.h"
 
-void *noctr_malloc(size_t size)
+void *nocrt_malloc(size_t size)
 {
 	return HeapAlloc(GetProcessHeap(), 0, size);
 }
 
-void *noctr_realloc(void *ptr, size_t new_size)
+void *nocrt_realloc(void *ptr, size_t new_size)
 {
 	return HeapReAlloc(GetProcessHeap(), 0, ptr, new_size);
 }
 
-void *noctr_calloc(size_t num, size_t size)
+void *nocrt_calloc(size_t num, size_t size)
 {
 	size_t total = num*size; 
 	
   return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, total);
 }
 
-void noctr_free(void *ptr)
+void nocrt_free(void *ptr)
 {
 	HeapFree(GetProcessHeap(), 0, ptr);
 }
 
 #endif /* NOCRT_MEM */
-

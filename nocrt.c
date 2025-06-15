@@ -632,13 +632,42 @@ static size_t vformat_float(void *resource, formatf_callback_t f, size_t *pn, fm
 #ifdef NOCRT_FLOAT	
 	int width_dec = spec->width_dec;
 	if(width_dec == 0) width_dec = 6;
-		
+
+	if(v == INFINITY || v == -INFINITY)
+	{
+		if(v == -INFINITY)
+		{
+			f(resource, '-');
+			r++;
+		}
+		else if(spec->sign_force)
+		{
+			f(resource, '+');
+			r++;
+		}
+
+		f(resource, 'i');
+		f(resource, 'n');
+		f(resource, 'f');
+
+		r += 3;
+		return r;
+	}
+
+	if(isnan(v))
+	{
+		f(resource, 'n');
+		f(resource, 'a');
+		f(resource, 'n');
+		return 3;
+	}
+
 	if(v < 0.0f)
 	{
 		negative = 1;
 		v = 0 - v;
 	}
-	
+
 	/* round last decimal place */
 	for(int i = 0; i < width_dec; i++)
 	{
@@ -656,6 +685,8 @@ static size_t vformat_float(void *resource, formatf_callback_t f, size_t *pn, fm
 	while(v1 >= 1 && posup < MAXFLOAT_BUFFER)
 	{
 		unsigned int d = (unsigned int)nocrt_fmod(v1, 10);
+		if(d >= 10) d = 0;
+
 		bufup[posup] = '0' + d;
 		posup++;
 		v1 /= 10.0f;
@@ -665,7 +696,10 @@ static size_t vformat_float(void *resource, formatf_callback_t f, size_t *pn, fm
 	{
 		maxfloat_t d;
 		v2 = nocrt_modf(v2*10.0f, &d);
-		bufdown[posdown] = '0' + ((unsigned int)d);
+		unsigned int di = (unsigned int)d;
+		if(di >= 10) di = 0;
+
+		bufdown[posdown] = '0' + di;
 		posdown++;
 	}
 	
@@ -740,7 +774,7 @@ static const char vformatf_nullstr[] = "(null)";
 
 size_t nocrt_vformatf(void *resource, formatf_callback_t f, size_t n, const char *fmt, va_list args)
 {
-  int ctrl = 0; 
+  int ctrl = 0;
   size_t left = n;
   size_t cnt = 0;
   fmt_spec_t spec;

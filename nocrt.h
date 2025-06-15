@@ -128,6 +128,16 @@ int nocrt_atoi(const char *str);
 	double nocrt_cos(double x);
 	double nocrt_tan(double x);
 
+	#define NOCRT_DOUBLE_MAX_DIGITS 16 /*ceil(log(10, 2^52)) */
+	#define NOCRT_FLOAT_MAX_DIGITS 7   /*ceil(log(10, 2^22)) */
+
+	double nocrt_log_eps(double z, unsigned int digits);
+	double nocrt_sin_eps(double x, int digits);
+	double nocrt_cos_eps(double x, int digits);
+	double nocrt_tan_eps(double x, int digits);
+#endif
+
+#if defined(NOCRT_FLOAT) || defined(NOCRT_CALC)
 # define logf nocrt_logf
 # define sinf nocrt_sinf
 # define cosf nocrt_cosf
@@ -137,6 +147,10 @@ int nocrt_atoi(const char *str);
 # define cos nocrt_cos
 # define tan nocrt_tan
 #endif
+
+#define NOCRT_LN2  0.69314718055994530941 /* ln(2) */
+#define NOCRT_PI   3.14159265358979323846
+#define NOCRT_PI_2 1.57079632679489661923
 
 #ifdef NOCRT_MEM
 # include "nocrt_mem.h"

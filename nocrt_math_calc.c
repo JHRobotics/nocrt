@@ -41,10 +41,7 @@ typedef union _editable_double_t
 # define ED_SECOND_BYTE 6
 #endif
 
-#define P2_DOUBLE_MAX_DIGITS 16 /*ceil(log(10, 2^52)) */
-#define P2_FLOAT_MAX_DIGITS 7   /*ceil(log(10, 2^22)) */
 
-#define P2_LN2 0.69314718055994530941 /* ln(2) */
 #define P2_DEF_EXP 0x3FF              /* exponent of number 1.0 */
 
 #define REM_SING(_ed) _ed.direct[ED_FIRST_BYTE] &= 0x7F
@@ -56,14 +53,41 @@ typedef union _editable_double_t
 	_ed.direct[ED_FIRST_BYTE] |= (exp >> 4) & 0x7F; \
 	_ed.direct[ED_SECOND_BYTE] &= 0x0F; _ed.direct[ED_SECOND_BYTE] |= exp << 4;
 
-static double log_eps(double z, unsigned int digits)
+static double eps_tables[NOCRT_DOUBLE_MAX_DIGITS] =
+{
+	1,
+	0.1d,
+	0.01d,
+	0.001d,
+	0.0001d,
+	0.00001d,
+	0.000001d,
+	0.0000001d,
+	0.00000001d,
+	0.000000001d,
+	0.0000000001d,
+	0.00000000001d,
+	0.000000000001d,
+	0.0000000000001d,
+	0.00000000000001d,
+	0.000000000000001d
+};
+
+static double nocrt_eps(unsigned int digits)
+{
+	if(digits >= NOCRT_DOUBLE_MAX_DIGITS)
+		digits = NOCRT_DOUBLE_MAX_DIGITS-1;
+
+	return eps_tables[digits];
+}
+
+double nocrt_log_eps(double z, unsigned int digits)
 {
 	double from;
 	unsigned int counter = 0;
 	double powered;
-	unsigned int i = 0;
 	double rval = 0;
-	double eps = 1.0f;
+	double eps = nocrt_eps(digits);
 	editable_double_t last, test;
 	short exp;
 
@@ -75,12 +99,6 @@ static double log_eps(double z, unsigned int digits)
 	if(z == 0)
 	{
 		return -INFINITY;
-	}
-
-	/* calc eps */
-	for(i = 0; i < digits; i++)
-	{
-		eps /= 10;
 	}
 
 	/* get a exponent */
@@ -111,29 +129,22 @@ static double log_eps(double z, unsigned int digits)
 		REM_SING(test); /* same as test = abs(test) */
 	}
 
-	return rval * 2 + exp * P2_LN2; /* P2_LN2 is constant for fast calculation */
+	return rval * 2 + exp * NOCRT_LN2; /* P2_LN2 is constant for fast calculation */
 }
 
-double sin_eps(double x, int digits)
+double nocrt_sin_eps(double x, int digits)
 {
 	editable_double_t test, last;
 	double fact = 1.0f;
 	double powered = x;
 	double counter = 1.0f;
 	double rval = x;
-	double eps = 1.0f;
+	double eps = nocrt_eps(digits);
 	double add_sub = -1.0;
-	int i;
 
 	if(x == NAN || x == INFINITY || digits <= 0)
 	{
 		return NAN;
-	}
-
-	/* calc the eps */
-	for(i = 0; i < digits; i++)
-	{
-		eps /= 10;
 	}
 
 	last.number = x;
@@ -157,26 +168,19 @@ double sin_eps(double x, int digits)
 	return rval;
 }
 
-double cos_eps(double x, int digits)
+double nocrt_cos_eps(double x, int digits)
 {
 	editable_double_t test, last;
 	double fact = 2.0f;
 	double powered = 1.0f;
 	double counter = 2.0f;
 	double rval = 1.0f;
-	double eps = 1.0f;
+	double eps = nocrt_eps(digits);
 	double add_sub = -1.0;
-	int i;
 
 	if(x == NAN || x == INFINITY || digits <= 0)
 	{
 		return NAN;
-	}
-
-	/* calc the eps */
-	for(i = 0; i < digits; i++)
-	{
-		eps /= 10;
 	}
 
 	last.number = x;
@@ -201,49 +205,68 @@ double cos_eps(double x, int digits)
 	return rval;
 }
 
-/* exports */
+double nocrt_tan_eps(double x, int digits)
+{
+	double eps = nocrt_eps(digits);
+	double a = nocrt_sin_eps(x, digits);	
+	double b = nocrt_cos_eps(x, digits);
+	if(b >= -eps && b <= eps)
+	{
+		if(a >= 0)
+		{
+			return INFINITY;
+		}
+		else
+		{
+			return -INFINITY;
+		}
+	}
+
+	return a/b;
+}
+
 float nocrt_logf(float x)
 {
-	return log_eps(x, P2_FLOAT_MAX_DIGITS);
+	return nocrt_log_eps(x, NOCRT_FLOAT_MAX_DIGITS);
 }
+
+/* exports */
+
+#ifndef NOCRT_FLOAT
 
 float nocrt_sinf(float x)
 {
-	return sin_eps(x, P2_FLOAT_MAX_DIGITS);
+	return nocrt_sin_eps(x, NOCRT_FLOAT_MAX_DIGITS);
 }
 
 float nocrt_cosf(float x)
 {
-	return cos_eps(x, P2_FLOAT_MAX_DIGITS);
+	return nocrt_cos_eps(x, NOCRT_FLOAT_MAX_DIGITS);
 }
 
 float nocrt_tanf(float x)
 {
-	double a = sin_eps(x, P2_FLOAT_MAX_DIGITS);
-	double b = cos_eps(x, P2_FLOAT_MAX_DIGITS);
-
-	return a/b;
+	return nocrt_tan_eps(x, NOCRT_FLOAT_MAX_DIGITS);
 }
 
 double nocrt_log(double x)
 {
-	return log_eps(x, P2_DOUBLE_MAX_DIGITS);
+	return nocrt_log_eps(x, NOCRT_DOUBLE_MAX_DIGITS);
 }
 
 double nocrt_sin(double x)
 {
-	return sin_eps(x, P2_DOUBLE_MAX_DIGITS);
+	return nocrt_sin_eps(x, NOCRT_DOUBLE_MAX_DIGITS);
 }
 
 double nocrt_cos(double x)
 {
-	return cos_eps(x, P2_DOUBLE_MAX_DIGITS);
+	return nocrt_cos_eps(x, NOCRT_DOUBLE_MAX_DIGITS);
 }
 
-double nocrt_tan(double x)
+float nocrt_tan(float x)
 {
-	double a = sin_eps(x, P2_DOUBLE_MAX_DIGITS);
-	double b = cos_eps(x, P2_DOUBLE_MAX_DIGITS);
-
-	return a/b;
+	return nocrt_tan_eps(x, NOCRT_DOUBLE_MAX_DIGITS);
 }
+
+#endif
