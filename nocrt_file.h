@@ -57,6 +57,7 @@ extern nocrt_FILE *nocrt_stdin;
 extern nocrt_FILE *nocrt_stdout;
 extern nocrt_FILE *nocrt_stderr;
 
+#ifndef NOCRT_NOREPLACE
 #define fopen nocrt_fopen
 #define fclose nocrt_fclose
 #define fread nocrt_fread
@@ -83,7 +84,6 @@ extern nocrt_FILE *nocrt_stderr;
 #define mkdir  nocrt_mkdir
 #define _mkdir(_d) nocrt_mkdir(_d, 0)
 #define unlink nocrt_unlink
-
 
 #define FILE nocrt_FILE
 
@@ -114,6 +114,8 @@ extern nocrt_FILE *nocrt_stderr;
 #ifndef SEEK_END
 #define SEEK_END 2
 #endif
+
+#endif /* !NOCRT_NOREPLACE */
 
 #endif /* NOCRT */
 

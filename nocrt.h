@@ -62,6 +62,7 @@ long int nocrt_strtol(const char* str, char** endptr, int base);
 long int nocrt_atol(const char *str);
 int nocrt_atoi(const char *str);
 
+#ifndef NOCRT_NOREPLACE
 #define strcmp  nocrt_strcmp
 #define stricmp nocrt_stricmp
 #define strnicmp nocrt_strnicmp
@@ -98,17 +99,18 @@ int nocrt_atoi(const char *str);
 #define atoi     nocrt_atoi
 #define atol     nocrt_atol
 
-#ifdef main
-#undef main
-#endif
-
 #ifdef ceil
 #undef ceil
 #endif
 
 #define ceil(_f) (_f + 0.5)
-
 #endif
+
+#ifdef main
+#undef main
+#endif
+
+#endif  /* NOCRT */
 
 #define NOCRT_MIN(_a, _b) (((_b) < (_a)) ? (_b) : (_a))
 #define NOCRT_MAX(_a, _b) (((_b) > (_a)) ? (_b) : (_a))
@@ -137,7 +139,7 @@ int nocrt_atoi(const char *str);
 	double nocrt_tan_eps(double x, int digits);
 #endif
 
-#if defined(NOCRT_FLOAT) || defined(NOCRT_CALC)
+#if (defined(NOCRT_FLOAT) || defined(NOCRT_CALC)) && !defined(NOCRT_NOREPLACE)
 # define logf nocrt_logf
 # define sinf nocrt_sinf
 # define cosf nocrt_cosf

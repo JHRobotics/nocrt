@@ -29,10 +29,12 @@ void *nocrt_realloc(void *ptr, size_t new_size);
 void *nocrt_calloc(size_t num, size_t size);
 void nocrt_free(void *ptr);
 
+#ifndef NOCRT_NOREPLACE
 #define malloc nocrt_malloc
 #define realloc nocrt_realloc
 #define calloc nocrt_calloc
 #define free nocrt_free
+#endif
 
 #endif /* NOCRT */
 

@@ -121,6 +121,7 @@ float nocrt_cosf(float x)
 	return y;
 }
 
+#if defined(_X86_) || defined(__i386__)
 static double tan_base(double x)
 {
 	if(x > NOCRT_PI_2)
@@ -140,6 +141,7 @@ static double tan_base(double x)
 	
 	return x;
 }
+#endif
 
 #define EPS_DOUBLE 0.000000000000001d
 #define EPS_FLOAT  0.0000001f
