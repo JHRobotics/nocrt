@@ -193,23 +193,47 @@ char *nocrt_strncat(char *dst, const char *src, size_t num)
 
 void  *nocrt_memcpy(void *dst, const void *src, size_t num)
 {
-	if(num % sizeof(long) == 0)
-	{
-		num /= sizeof(long);
-		unsigned long *pdst32 = dst;
-		const unsigned long *psrc32 = src;
-		
-		while(num--) *(pdst32++) = *(psrc32++);
-	}
-	else
-	{
-		unsigned char *pdst = dst;
-		const unsigned char *psrc = src;
-		
-		while(num--) *(pdst++) = *(psrc++);
-	}
-	
+	unsigned long *pdst32 = dst;
+	const unsigned long *psrc32 = src;
+	unsigned char *pdst;
+	const unsigned char *psrc;
+	size_t num4 = num / sizeof(unsigned long);
+
+	while(num4--)
+		*(pdst32++) = *(psrc32++);
+
+	num = num % sizeof(unsigned long);
+	pdst = (unsigned char *)pdst32;
+	psrc = (const unsigned char *)psrc32;
+
+	while(num--)
+		*(pdst++) = *(psrc++);
+
 	return dst;
+}
+
+void  *nocrt_memmove(void *destination, const void *source, unsigned int num)
+{
+	unsigned char *dst = (unsigned char *)destination;
+	const unsigned char *src = (const unsigned char *)source;
+	
+	if(src > dst)
+	{
+		while(num--)
+		{
+			*dst++ = *src++;
+		}
+	}
+	else if(src < dst)
+	{
+		dst += num;
+		src += num;
+		while(num--)
+		{
+			*dst-- = *src--;
+		}
+	}
+	return destination;
 }
 
 char *nocrt_strrchr(const char *str, int character)
@@ -1153,6 +1177,17 @@ MEMSET_DEF(nocrt_memset)
 
 MEMSET_DEF(memset)
 #endif
+
+/* msvcrt export bind */
+int nocrt__strnicmp(const char *s1, const char *s2, size_t num)
+{
+	return nocrt_strnicmp(s1, s2, num);
+}
+
+int nocrt__stricmp(const char *s1, const char *s2)
+{
+	return nocrt_stricmp(s1, s2);
+}
 
 #endif /* NOCRT */
 
