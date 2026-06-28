@@ -230,7 +230,7 @@ void  *nocrt_memmove(void *destination, const void *source, unsigned int num)
 		src += num;
 		while(num--)
 		{
-			*dst-- = *src--;
+			*--dst = *--src;
 		}
 	}
 	return destination;
